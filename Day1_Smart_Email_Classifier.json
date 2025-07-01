@@ -1,0 +1,403 @@
+{
+  "name": "Day1_Smart_Email_Classifier",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "id": "3d301f22-533a-4652-a5d6-13b5a41bbeee",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [
+        -940,
+        340
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dt6mAFjQsNnC3jbk",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse AI response\nlet classification = {\n  urgency: \"medium\",\n  category: \"general\",\n  summary: \"Email received\",\n  suggested_response: \"\"\n};\n\ntry {\n  // Get the content from OpenAI response\n  const content = $input.first().json.choices[0].message.content;\n  classification = content; // It's already an object when JSON output is enabled\n} catch (error) {\n  console.log(\"Parse error:\", error);\n}\n\n// Get email data\nconst gmailData = $('Gmail Trigger').first().json;\n\n// Return processed data\nreturn {\n  // Email info\n  emailId: gmailData.id,\n  threadId: gmailData.threadId,\n  from: gmailData.from.value[0].address,\n  subject: gmailData.subject,\n  snippet: gmailData.snippet,\n  \n  // Classification\n  urgency: classification.urgency || \"medium\",\n  category: classification.category || \"general\",\n  summary: classification.summary || \"Email processed\",\n  suggestedResponse: classification.suggested_response || \"\",\n  \n  // Actions\n  isHighPriority: (classification.urgency === \"high\"),\n  shouldDraft: (classification.suggested_response && classification.suggested_response.length > 20)\n};"
+      },
+      "id": "832ebeb0-c57d-4cf2-bade-f59f6a0f383a",
+      "name": "Process Classification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{$json[\"emailId\"]}}"
+      },
+      "id": "0986f85c-f6bd-46f6-b1a6-aa09a5ef605d",
+      "name": "Mark as Read",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -220,
+        160
+      ],
+      "webhookId": "75cd89bf-a12d-45c0-a8b9-49cca1165ab1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dt6mAFjQsNnC3jbk",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "2d1e8282-1a21-4e37-bc29-71eea24eee67",
+              "leftValue": "={{ $json.isHighPriority }}",
+              "rightValue": "={{ true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "32aae883-5899-4614-9de1-7b4894eaa926",
+      "name": "High Priority?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "draft-check",
+              "leftValue": "={{ $json.shouldDraft }}",
+              "rightValue": "={{ true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6aeb920c-717e-4ec7-8b7e-5d310b691bd5",
+      "name": "Need Draft?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        80,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "=Re: {{$json[\"subject\"]}}",
+        "message": "={{$json[\"suggestedResponse\"]}}\n\n---\nThis is an automated draft. Please review before sending.\n\nBest regards",
+        "options": {
+          "threadId": "={{$json[\"threadId\"]}}",
+          "sendTo": "={{$json[\"from\"]}}"
+        }
+      },
+      "id": "2d30116b-6f73-499a-b865-8870f6ece8d3",
+      "name": "Create Draft Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        280,
+        500
+      ],
+      "webhookId": "7bd1e741-b7dd-4ce6-a8bf-a747022c2f80",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dt6mAFjQsNnC3jbk",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "status",
+              "stringValue": "Email Processed Successfully"
+            },
+            {
+              "name": "email_from",
+              "stringValue": "={{$('Process Classification').item.json[\"from\"]}}"
+            },
+            {
+              "name": "subject",
+              "stringValue": "={{$('Process Classification').item.json[\"subject\"]}}"
+            },
+            {
+              "name": "classification",
+              "stringValue": "={{$('Process Classification').item.json[\"category\"]}} - {{$('Process Classification').item.json[\"urgency\"]}}"
+            },
+            {
+              "name": "starred",
+              "stringValue": "={{$('Process Classification').item.json[\"isHighPriority\"]}}"
+            },
+            {
+              "name": "draft_created",
+              "stringValue": "={{$('Process Classification').item.json[\"shouldDraft\"]}}"
+            }
+          ]
+        },
+        "include": "none",
+        "options": {}
+      },
+      "id": "9977d64a-24e4-4cb7-ab50-7c011c017853",
+      "name": "Success Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        580,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "GPT-3.5-TURBO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an email classification assistant. Analyze emails and respond with JSON.\n\nUrgency:\n- high: urgent, ASAP, emergency, critical, immediate\n- medium: normal business inquiries\n- low: newsletters, confirmations, FYI\n\nCategories:\n- customer: orders, complaints, product issues\n- sales: pricing, demos, purchase inquiries\n- support: technical help, bugs\n- general: everything else\n\nAlways respond with valid JSON like:\n{\"urgency\": \"high\", \"category\": \"customer\", \"summary\": \"One line summary\", \"suggested_response\": \"Draft reply if needed\"}"
+            },
+            {
+              "content": "=From: {{$json[\"from\"][\"value\"][0][\"address\"]}}\nSubject: {{$json[\"subject\"]}}\nEmail: {{$json[\"text\"] || $json[\"snippet\"]}}"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -760,
+        340
+      ],
+      "id": "e8d5e0c8-bcfe-44ea-9bf0-e95a2956a1e5",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "JrbGw6Jxg8rwVMek",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{$json[\"emailId\"]}}",
+        "labelIds": [
+          "STARRED"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        280,
+        80
+      ],
+      "id": "ecdcb603-70d4-440c-8f6a-d2071eb64754",
+      "name": "Add label to message",
+      "webhookId": "33f34502-5859-4af9-90c8-7059de8f8fbf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dt6mAFjQsNnC3jbk",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Classification": {
+      "main": [
+        [
+          {
+            "node": "Mark as Read",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "High Priority?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Need Draft?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Read": {
+      "main": [
+        [
+          {
+            "node": "Success Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "High Priority?": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Success Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Need Draft?": {
+      "main": [
+        [
+          {
+            "node": "Create Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Success Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "Success Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Process Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message": {
+      "main": [
+        [
+          {
+            "node": "Success Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ce823529-1674-409b-8721-5b7f4091b85e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6298067642c3e349581f2e29092e2f6c83f0a76b4135fb1998c90c198e1c5829"
+  },
+  "id": "d1D66ZeHP8TNHwB2",
+  "tags": [
+    {
+      "name": "Day 1",
+      "id": "HOMJEzKGDgeY3c9r",
+      "createdAt": "2025-07-01T15:27:27.544Z",
+      "updatedAt": "2025-07-01T15:27:27.544Z"
+    },
+    {
+      "name": "Email Automation",
+      "id": "EBkGqgvbxco1n4Eg",
+      "createdAt": "2025-07-01T15:27:27.598Z",
+      "updatedAt": "2025-07-01T15:27:27.598Z"
+    }
+  ]
+}
