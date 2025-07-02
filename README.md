@@ -26,7 +26,7 @@ Each automation:
 **Problem:** Rewriting the same post for LinkedIn, Twitter, Facebook  
 **Solution:** Write once, AI adapts for each platform's vibe  
 **Time Saved:** 20-30 mins per post  
-[View Workflow](./day2-social-media-poster)
+[View Workflow](https://github.com/SaiAkhil066/n8n_50-50_challenge/blob/main/Day2_Social_media_Multi_Posting_.json)
 
 ### 🔄 Day 3: Coming Soon...
 (Check back tomorrow!)
