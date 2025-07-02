@@ -20,7 +20,7 @@ Each automation:
 **Problem:** Drowning in emails, missing important stuff  
 **Solution:** AI reads emails, identifies urgency, stars important ones, drafts responses  
 **Time Saved:** 2+ hours daily  
-[View Workflow](./day1-email-classifier)
+[View Workflow](https://github.com/SaiAkhil066/n8n_50-50_challenge/blob/main/Day1_Smart_Email_Classifier.json)
 
 ### ✅ Day 2: Social Media Multi-Poster  
 **Problem:** Rewriting the same post for LinkedIn, Twitter, Facebook  
