@@ -1,0 +1,338 @@
+{
+  "name": "Day3_AI_Invoice_Processor",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "=invoice-upload",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "2cd4365b-4a00-4bf8-bbb7-af63ac8d1c99",
+      "name": "Webhook - Invoice Upload",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        360,
+        -80
+      ],
+      "webhookId": "fe49a496-717e-4280-a750-3539f54aa5db"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extract the content from DeepSeek response\nconst deepseekResponse = $input.item.json;\nlet content = deepseekResponse.choices[0].message.content;\n\n// Remove markdown code blocks if present\ncontent = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n\n// Parse the cleaned JSON\nconst invoiceData = JSON.parse(content);\n\n// Add metadata\ninvoiceData.processed_date = new Date().toISOString();\ninvoiceData.status = 'pending';\ninvoiceData.upload_source = 'webhook';\n\n// Calculate if overdue\nif (invoiceData.due_date) {\n  const dueDate = new Date(invoiceData.due_date);\n  const today = new Date();\n  invoiceData.is_overdue = dueDate < today;\n}\n\n// Format line items for sheet\ninvoiceData.line_items_formatted = invoiceData.line_items\n  ? invoiceData.line_items.map(item => `${item.description} (${item.quantity} x ${item.unit_price})`).join('; ')\n  : '';\n\nreturn invoiceData;"
+      },
+      "id": "049c8c19-0884-47ba-a962-4d1777c165dd",
+      "name": "Process & Format Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        860,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "success"
+            },
+            {
+              "name": "message",
+              "value": "Invoice processed successfully"
+            },
+            {
+              "name": "invoice_number",
+              "value": "={{ $node[\"Process & Format Data\"].json.invoice_number }}"
+            },
+            {
+              "name": "vendor",
+              "value": "={{ $node[\"Process & Format Data\"].json.vendor_name }}"
+            },
+            {
+              "name": "amount",
+              "value": "={{ $node[\"Process & Format Data\"].json.total_amount }} {{ $node[\"Process & Format Data\"].json.currency }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ac0adff0-79f5-442b-9201-9e54ea841a90",
+      "name": "Build Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZVle_U6DsKyt3JGqlcd4nrPIDif1kSqzwEisZdHR1D0",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZVle_U6DsKyt3JGqlcd4nrPIDif1kSqzwEisZdHR1D0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice Number": "={{$json.invoice_number}}",
+            "Vendor Name": "={{$json.vendor_name}}",
+            "Invoice Date": "={{$json.invoice_date}}",
+            "Due Date": "={{$json.due_date}}",
+            "Total Amount": "={{$json.total_amount}}",
+            "Currency": "={{$json.currency}}",
+            "Tax Amount": "={{$json.tax_amount}}",
+            "Payment Terms": "={{$json.payment_terms}}",
+            "Line Items": "={{$json.line_items_formatted}}",
+            "Status (Overdue/On Time)": "={{$json.is_overdue ? 'OVERDUE' : 'On Time'}}",
+            "Processing Status": "={{$json.status}}",
+            "Processed Date": "={{$json.processed_date}}",
+            "Upload Source": "webhook"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Invoice Number",
+              "displayName": "Invoice Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Vendor Name",
+              "displayName": "Vendor Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice Date",
+              "displayName": "Invoice Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Due Date",
+              "displayName": "Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Amount",
+              "displayName": "Total Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Currency",
+              "displayName": "Currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tax Amount",
+              "displayName": "Tax Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Payment Terms",
+              "displayName": "Payment Terms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Line Items",
+              "displayName": "Line Items",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status (Overdue/On Time)",
+              "displayName": "Status (Overdue/On Time)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processing Status",
+              "displayName": "Processing Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processed Date",
+              "displayName": "Processed Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Upload Source",
+              "displayName": "Upload Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1080,
+        -80
+      ],
+      "id": "3f620c5e-1d56-47c3-bc5a-0c656290663c",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "LuGHtGV32D0OurSN",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"deepseek-chat\",\n  \"temperature\": 0.1,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an invoice data extraction specialist. Extract the following information from the invoice text and return ONLY a valid JSON object (no markdown, no extra text) with these exact fields:\\n- vendor_name (string)\\n- invoice_number (string)\\n- invoice_date (string in YYYY-MM-DD format)\\n- due_date (string in YYYY-MM-DD format)\\n- total_amount (number, without currency symbol)\\n- currency (string, e.g., 'USD', 'EUR', 'INR')\\n- line_items (array of objects with: description, quantity, unit_price, total)\\n- tax_amount (number)\\n- payment_terms (string)\\n\\nIf any field is not found, use null. For dates, convert to YYYY-MM-DD format. For amounts, extract only the numeric value.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.body.invoice_text) }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        -80
+      ],
+      "id": "586a496a-5c01-46a2-b0f0-819004ce8c28",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vSAJXOzWrX84Exvs",
+          "name": "Header Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook - Invoice Upload": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process & Format Data": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Build Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Process & Format Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9d265f6a-7eba-40a9-819e-ae8058ca357c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6298067642c3e349581f2e29092e2f6c83f0a76b4135fb1998c90c198e1c5829"
+  },
+  "id": "DN0u0Rv4pDGs3E8g",
+  "tags": []
+}
