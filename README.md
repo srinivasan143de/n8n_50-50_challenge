@@ -1,6 +1,6 @@
 # 50 Days, 50 AI Automations 🚀
 
-Hey! I'm Sai Akhil, AI/ML Developing Engineer and I got tired of doing the same repetitive tasks every damn day. So I'm building 50 AI-powered automations in 50 days using n8n.
+Hey! I'm Sai Akhil, AI/ML Developing Engineer https://www.saiakhil.space and I got tired of doing the same repetitive tasks every damn day. So I'm building 50 AI-powered automations in 50 days using n8n.
 
 Why? Because I'm lazy and I'd rather spend an hour automating something than 5 minutes doing it repeatedly for the rest of my life.
 
