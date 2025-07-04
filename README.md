@@ -28,7 +28,7 @@ Each automation:
 **Time Saved:** 20-30 mins per post  
 [View Workflow](https://github.com/SaiAkhil066/n8n_50-50_challenge/blob/main/Day2_Social_media_Multi_Posting_.json)
 
-### 🔄 Day 3: AI Invoice Processor.
+### ✅ Day 3: AI Invoice Processor.
 **Problem:** So I'm staring at a stack of invoices thinking about manually typing all that data into Excel. 
 **Solution:** Built an automation that reads invoices (PDF or text) and dumps everything straight into Google Sheets  
 **Time Saved:** Hell lot of time daily (can't be specific with the time)
