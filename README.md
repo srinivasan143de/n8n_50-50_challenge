@@ -31,9 +31,16 @@ Each automation:
 ### ✅ Day 3: AI Invoice Processor.
 **Problem:** So I'm staring at a stack of invoices thinking about manually typing all that data into Excel. 
 **Solution:** Built an automation that reads invoices (PDF or text) and dumps everything straight into Google Sheets  
-**Time Saved:** Hell lot of time daily (can't be specific with the time
+**Time Saved:** Hell lot of time daily (can't be specific with the time)
 
 [View Workflow](https://github.com/SaiAkhil066/n8n_50-50_challenge/blob/main/Day3_AI_Invoice_Processor.json)
+
+### ✅ Day 4: Gmail auto-replier.
+**Problem:** Spending an hour daily on repetitive email responses - rate inquiries, thank you notes, basic questions. The same answers, different people.
+**Solution:** An AI-powered workflow that reads unread emails, categorizes them (promotional, newsletter, question, request), and drafts contextual responses only for emails that actually need replies. Creates drafts, not automatic sends - maintaining human oversight.
+**Time Saved:** ~1 hour daily of email hell.
+
+[View Workflow](https://github.com/SaiAkhil066/n8n_50-50_challenge/blob/main/Day_4__Gmail_Auto_Replier.json)
 
 ## Want to Use These?
 
